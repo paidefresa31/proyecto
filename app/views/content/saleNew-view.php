@@ -245,22 +245,75 @@
 
 <div class="modal" id="modal-js-product">
     <div class="modal-background"></div>
-    <div class="modal-card">
+    <div class="modal-card" style="width:90%; max-width:1000px;">
         <header class="modal-card-head">
-          <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Buscar producto</p>
+          <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Buscar producto por categoría</p>
           <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            <div class="field mt-6 mb-6">
-                <label class="label">Nombre, marca, modelo</label>
-                <div class="control">
-                    <input class="input" type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" name="input_codigo" id="input_codigo" maxlength="30" >
+            <?php
+                use app\controllers\productController;
+                $insProductoModal = new productController();
+            ?>
+            <div class="columns">
+                <div class="column is-one-third">
+                    <h3 class="title is-6 has-text-centered">Categorías</h3>
+                    <?php
+                        $datos_categorias_modal = $insProductoModal->seleccionarDatos("Normal","categoria","*",0);
+                        if($datos_categorias_modal->rowCount()>0){
+                            $datos_categorias_modal = $datos_categorias_modal->fetchAll();
+                            foreach($datos_categorias_modal as $cat_row){
+                                echo '<button type="button" class="button is-fullwidth mb-2" onclick="cargar_por_categoria('.$cat_row['categoria_id'].')">'.$cat_row['categoria_nombre'].'</button>';
+                            }
+                        }else{
+                            echo '<p class="has-text-centered">No hay categorías</p>';
+                        }
+                    ?>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Buscar (Nombre, Marca, Modelo o Código)</label>
+                        <div class="control has-addons">
+                            <input class="input" type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" name="input_codigo" id="input_codigo" maxlength="30" placeholder="Buscar en la categoría o en todo el catálogo">
+                            <a class="control">
+                                <button type="button" class="button is-link" id="btn_buscar_modal" onclick="buscar_codigo()"><i class="fas fa-search"></i></button>
+                            </a>
+                        </div>
+                    </div>
+                    <div id="tabla_productos"></div>
                 </div>
             </div>
-            <div class="container" id="tabla_productos"></div>
-            <p class="has-text-centered">
-                <button type="button" class="button is-link is-light" onclick="buscar_codigo()" ><i class="fas fa-search"></i> &nbsp; Buscar</button>
-            </p>
+            <script>
+                // Cargar productos por categoría via AJAX
+                function cargar_por_categoria(id){
+                    let datos = new FormData();
+                    datos.append('categoria_id', id);
+                    datos.append('modulo_venta', 'buscar_por_categoria');
+
+                    fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+                        method: 'POST',
+                        body: datos
+                    })
+                    .then(respuesta => respuesta.text())
+                    .then(respuesta =>{
+                        document.querySelector('#tabla_productos').innerHTML = respuesta;
+                    });
+                }
+
+                // Búsqueda en vivo: debounce
+                (function(){
+                    let timer = null;
+                    let input = document.querySelector('#input_codigo');
+                    if(input){
+                        input.addEventListener('keyup', function(e){
+                            clearTimeout(timer);
+                            timer = setTimeout(function(){
+                                if(input.value.trim().length>0){ buscar_codigo(); } else { document.querySelector('#tabla_productos').innerHTML = '';} 
+                            }, 300);
+                        });
+                    }
+                })();
+            </script>
         </section>
     </div>
 </div>

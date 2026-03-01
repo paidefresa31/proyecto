@@ -29,6 +29,10 @@
 		if($_POST['modulo_usuario']=="actualizarFoto"){
 			echo $insUsuario->actualizarFotoUsuarioControlador();
 		}
+
+		if($_POST['modulo_usuario']=="inhabilitar"){
+            echo $insUsuario->inhabilitarUsuarioControlador();
+        }
 		
 	}else{
 		session_destroy();

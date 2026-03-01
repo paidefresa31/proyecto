@@ -7,17 +7,17 @@
 		<h5 class="title is-5 has-text-centered">Inicia sesión con tu cuenta</h5>
 
 		<?php
-			if(isset($_POST['login_usuario']) && isset($_POST['login_clave'])){
+			if(isset($_POST['login_email']) && isset($_POST['login_clave'])){
 				$insLogin->iniciarSesionControlador();
 			}
 		?>
 
 		<div class="field">
-			<label class="label"><i class="fas fa-user-secret"></i> &nbsp; Usuario</label>
-			<div class="control">
-			    <input class="input" type="text" name="login_usuario" pattern="[a-zA-Z0-9]{4,20}" maxlength="20" required >
-			</div>
-		</div>
+            <label class="label"><i class="fas fa-envelope"></i> &nbsp; Correo Electrónico</label>
+            <div class="control">
+                <input class="input" type="email" name="login_email" maxlength="70" required placeholder="ejemplo@correo.com">
+            </div>
+        </div>
 
 		<div class="field">
 		  	<label class="label"><i class="fas fa-key"></i> &nbsp; Clave</label>
@@ -39,7 +39,7 @@
         </div>
 
 		<p class="has-text-centered mb-4 mt-3">
-			<button type="submit" class="button is-info is-rounded">LOG IN</button>
+			<button type="submit" class="button is-info is-rounded">ENTRAR</button>
 		</p>
 
         <div class="has-text-centered mb-4">

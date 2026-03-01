@@ -15,6 +15,11 @@
 			echo $insVenta->buscarCodigoVentaControlador();
 		}
 
+		/*--------- Buscar productos por categoria ---------*/
+		if($_POST['modulo_venta']=="buscar_por_categoria"){
+			echo $insVenta->buscarPorCategoriaVentaControlador();
+		}
+
 		/*--------- Agregar producto a carrito ---------*/
 		if($_POST['modulo_venta']=="agregar_producto"){
 			echo $insVenta->agregarProductoCarritoControlador();

@@ -24,6 +24,26 @@
 			}
         }
 
+        /*---------- Controlador buscar productos por categoría ----------*/
+        public function buscarPorCategoriaVentaControlador(){
+            $categoria_id = $this->limpiarCadena($_POST['categoria_id']);
+            if($categoria_id=="" || !is_numeric($categoria_id)){
+                return '<article class="message is-warning mt-4 mb-4"><div class="message-header"><p>¡Ocurrió un error inesperado!</p></div><div class="message-body has-text-centered"><i class="fas fa-exclamation-triangle fa-2x"></i><br>Categoría inválida</div></article>'; exit();
+            }
+
+            $datos_productos=$this->ejecutarConsulta("SELECT * FROM producto WHERE producto_estado='Activo' AND categoria_id='$categoria_id' ORDER BY producto_nombre ASC");
+            if($datos_productos->rowCount()>=1){
+                $datos_productos=$datos_productos->fetchAll();
+                $tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
+                foreach($datos_productos as $rows){
+                    $tabla.='<tr class="has-text-left" ><td><i class="fas fa-box fa-fw"></i> &nbsp; '.$rows['producto_nombre'].' (Stock: '.$rows['producto_stock'].')</td><td class="has-text-centered"><button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['producto_codigo'].'\')"><i class="fas fa-plus-circle"></i></button></td></tr>';
+                }
+                $tabla.='</tbody></table></div>'; return $tabla;
+            }else{
+                return '<article class="message is-warning mt-4 mb-4"><div class="message-header"><p>¡Ocurrió un error inesperado!</p></div><div class="message-body has-text-centered"><i class="fas fa-exclamation-triangle fa-2x"></i><br>No hemos encontrado ningún producto ACTIVO en esta categoría</div></article>'; exit();
+            }
+        }
+
         /*---------- Controlador agregar producto a venta ----------*/
         public function agregarProductoCarritoControlador(){
             $codigo=$this->limpiarCadena($_POST['producto_codigo']);

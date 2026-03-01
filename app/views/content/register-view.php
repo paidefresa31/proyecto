@@ -78,20 +78,46 @@
     
     <script>
         function registrarUsuario() {
-            // 1. Obtener el formulario
-            const formulario = document.getElementById("form-register");
-            
-            // 2. Verificar manualmente si los campos son válidos
-            if(!formulario.checkValidity()){
-                // Si falta algo, mostramos alerta visible
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Faltan datos',
-                    text: 'Por favor completa todos los campos obligatorios correctamente.',
-                    confirmButtonText: 'Entendido'
-                });
-                return; // Detener aquí
-            }
+    const formulario = document.getElementById("form-register");
+    
+    // 1. Obtener los valores de los campos
+    const nombre = formulario.querySelector('input[name="usuario_nombre"]');
+    const apellido = formulario.querySelector('input[name="usuario_apellido"]');
+
+    // 2. Definir la regla (solo letras y espacios)
+    const soloLetras = /^[a-zA-ZÀ-ÿ\s]+$/;
+
+    // 3. Validaciones específicas con Alerta
+    if (!soloLetras.test(nombre.value)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Nombre inválido',
+            text: 'El nombre solo puede contener letras y espacios.',
+            confirmButtonText: 'Corregir'
+        });
+        return; // Detiene la ejecución
+    }
+
+    if (!soloLetras.test(apellido.value)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Apellido inválido',
+            text: 'El apellido solo puede contener letras y espacios.',
+            confirmButtonText: 'Corregir'
+        });
+        return; // Detiene la ejecución
+    }
+
+    // 4. Verificar el resto de validaciones (email, campos vacíos, etc.)
+    if(!formulario.checkValidity()){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Faltan datos',
+            text: 'Por favor completa todos los campos correctamente.',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
 
             // 3. Si todo está bien, procedemos a preguntar
             Swal.fire({
