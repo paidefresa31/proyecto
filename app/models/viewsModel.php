@@ -26,8 +26,6 @@
 				}
 			}elseif($vista=="login" || $vista=="index"){
 				$contenido="login";
-			}elseif($vista=="register"){
-				$contenido="register";
 			}else{
 				$contenido="404";
 			}

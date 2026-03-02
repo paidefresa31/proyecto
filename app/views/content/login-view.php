@@ -39,14 +39,12 @@
         </div>
 
 		<p class="has-text-centered mb-4 mt-3">
-			<button type="submit" class="button is-info is-rounded">ENTRAR</button>
+			<button type="submit" class="button is-info is-rounded">Iniciar Sesión</button>
 		</p>
 
-        <div class="has-text-centered mb-4">
-            <a href="<?php echo APP_URL; ?>register/" class="is-size-6">¿No tienes cuenta? Regístrate aquí</a>
-            <br>
-            <a href="#" onclick="Swal.fire('Atención', 'Contacte al administrador del sistema para restablecer su clave', 'info');" class="is-size-7" style="color: #777;">Olvidé mi contraseña</a>
-        </div>
+        <div class="has-text-centered mb-4 mt-4">
+    <a href="#" onclick="Swal.fire('Atención', 'Contacte al administrador del sistema para crear una cuenta o restablecer su clave', 'info');" class="is-size-7" style="color: #777;">¿Problemas para ingresar?</a>
+</div>
 
 	</form>
 </div>
