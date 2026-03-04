@@ -37,7 +37,9 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Código de barra</label>
-				  	<input class="input" type="text" name="producto_codigo" value="<?php echo $datos['producto_codigo']; ?>" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70" required >
+				  	<input class="input" type="text" name="producto_codigo" value="<?php echo $datos['producto_codigo']; ?>" pattern="[0-9]{1,13}" 
+           				maxlength="13" 
+           				required>
 				</div>
 		  	</div>
 		  	<div class="column">
