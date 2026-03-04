@@ -34,6 +34,17 @@
                 }
             }
 
+            # Verificando longitud de la clave #
+            if(strlen($clave1) < 7){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Error en Clave",
+                    "texto"=>"La contraseña es demasiado corta. Debe tener al menos 7 caracteres.",
+                    "icono"=>"error"
+                ]; 
+                return json_encode($alerta); exit();
+            }
+
             if($clave1!=$clave2){
                 $alerta=["tipo"=>"simple","titulo"=>"Error","texto"=>"Las contraseñas no coinciden","icono"=>"error"]; return json_encode($alerta); exit();
             }else{
@@ -272,6 +283,17 @@
             if($email!="" && $datos['usuario_email']!=$email){
                 $check_email=$this->ejecutarConsulta("SELECT usuario_email FROM usuario WHERE usuario_email='$email'");
                 if($check_email->rowCount()>0){ $alerta=["tipo"=>"simple","titulo"=>"Error","texto"=>"El EMAIL ya existe","icono"=>"error"]; return json_encode($alerta); exit(); }
+            }
+
+                        # Verificando longitud de la clave #
+            if(strlen($clave1) < 7){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Error en Clave",
+                    "texto"=>"La contraseña es demasiado corta. Debe tener al menos 7 caracteres.",
+                    "icono"=>"error"
+                ]; 
+                return json_encode($alerta); exit();
             }
 
             if($clave1!="" || $clave2!=""){
