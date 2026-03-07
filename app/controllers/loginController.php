@@ -43,8 +43,8 @@
                                 </div>
                               </article>';
                     }else{
-                        // Buscamos por correo o por usuario
-                        $check_usuario=$this->ejecutarConsulta("SELECT * FROM usuario WHERE usuario_email='$email' OR usuario_usuario='$email'");
+                        // Buscamos por correo 
+                        $check_usuario=$this->ejecutarConsulta("SELECT * FROM usuario WHERE usuario_email='$email'");
 
                         if($check_usuario->rowCount()==1){
                             $check_usuario=$check_usuario->fetch();
@@ -114,7 +114,7 @@
                                 # ====================================================================
                             }
                         }else{
-                            echo '<article class="message is-warning"><div class="message-body"><strong>Atención</strong><br>El usuario o correo electrónico ingresado no existe en el sistema.</div></article>';
+                            echo '<article class="message is-warning"><div class="message-body"><strong>Atención</strong><br>El correo electrónico ingresado no existe en el sistema.</div></article>';
                         }
                     }
                 }

@@ -15,7 +15,7 @@
         <div class="field">
             <label class="label"><i class="fas fa-envelope"></i> &nbsp; Correo Electrónico</label>
             <div class="control">
-                <input class="input" type="text" id="fake_email" maxlength="70" placeholder="ejemplo@correo.com" autocomplete="off" spellcheck="false">
+                <input class="input" type="email" id="fake_email" maxlength="70" placeholder="ejemplo@correo.com" autocomplete="off" spellcheck="false">
             </div>
         </div>
 
