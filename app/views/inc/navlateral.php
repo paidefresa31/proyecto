@@ -156,6 +156,21 @@
 								<div class="navLateral-body-cr">Nueva categoría</div>
 							</a>
 						</li>
+
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>subcategoryNew/" class="full-width">
+								<div class="navLateral-body-cl"><i class="fas fa-sitemap"></i></div>
+								<div class="navLateral-body-cr">Nueva subcategoría</div>
+							</a>
+						</li>
+
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>subcategorylist/" class="full-width">
+								<div class="navLateral-body-cl"><i class="fas fa-sitemap"></i></div>
+								<div class="navLateral-body-cr">Lista de subcategorías</div>
+							</a>
+						</li>
+
 						<li class="full-width">
 							<a href="<?php echo APP_URL; ?>categoryList/" class="full-width">
 								<div class="navLateral-body-cl"><i class="fas fa-clipboard-list fa-fw"></i></div>
