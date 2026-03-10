@@ -11,16 +11,27 @@
 			$datos=$datos->fetch();
 	?>
     
-    <div class="has-text-centered mb-6">
-        <figure class="image is-128x128 is-inline-block" style="border: 2px solid #ccc; border-radius: 10px; padding: 5px;">
-            <?php if(is_file("./app/views/img/logo.png")){ ?>
-                <img src="<?php echo APP_URL; ?>app/views/img/logo.png?v=<?php echo time(); ?>">
-            <?php }else{ ?>
-                <img src="<?php echo APP_URL; ?>app/views/img/default.png">
-            <?php } ?>
-        </figure>
-    </div>
-
+<div class="has-text-centered mb-6">
+    <figure class="image is-128x128 is-inline-block" style="border: 2px solid #ccc; border-radius: 10px; padding: 5px;">
+        <?php 
+            // Rutas físicas para comprobación
+            $path_logo = "./app/views/img/logo.png";
+            $path_black = "./app/views/img/logo_black.png";
+            
+            if(is_file($path_logo)): ?>
+                <img src="<?php echo APP_URL; ?>app/views/img/logo.png?v=<?php echo time(); ?>" class="logo-light">
+                
+                <img src="<?php echo APP_URL; ?>app/views/img/logo_black.png?v=<?php echo time(); ?>" class="logo-dark" style="display: none;">
+                
+                <?php if(!is_file($path_black)): ?>
+                    <script>console.warn("Fasnet: Falta el archivo logo_black.png en app/views/img/");</script>
+                <?php endif; ?>
+                
+        <?php else: ?>
+            <img src="<?php echo APP_URL; ?>app/views/img/default.png">
+        <?php endif; ?>
+    </figure>
+</div>
 	<h2 class="title has-text-centered"><?php echo $datos['empresa_nombre']; ?></h2>
 
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/empresaAjax.php" method="POST" autocomplete="off" enctype="multipart/form-data">

@@ -7,11 +7,21 @@
             $nombre_empresa = $datos_empresa['empresa_nombre'];
         }
     ?>
-  	<div class="columns is-flex is-justify-content-center mb-0">
-    	<figure class="image is-128x128">
-            <img src="<?php echo APP_URL; ?>app/views/img/logo.png" style="object-fit: contain;">
-		</figure>
-  	</div>
+    <div class="has-text-centered mb-6">
+        <figure class="image is-inline-block" style="max-width: 300px; border: 2px solid #ccc; border-radius: 10px; padding: 15px;">
+            <?php 
+                $path_logo = "./app/views/img/logo.png";
+                $path_black = "./app/views/img/logo_black.png";
+                
+                if(is_file($path_logo)): ?>
+                    <img src="<?php echo APP_URL; ?>app/views/img/logo.png?v=<?php echo time(); ?>" class="logo-light" style="width: 100%; height: auto;">
+                    
+                    <img src="<?php echo APP_URL; ?>app/views/img/logo_black.png?v=<?php echo time(); ?>" class="logo-dark" style="width: 100%; height: auto;">
+            <?php else: ?>
+                    <img src="<?php echo APP_URL; ?>app/views/img/default.png" style="width: 100px;">
+            <?php endif; ?>
+        </figure>
+    </div>
     <div class="columns is-flex is-justify-content-center mt-2 mb-2">
   		<h1 class="title is-2 has-text-weight-bold has-text-link"><?php echo $nombre_empresa; ?></h1>
   	</div>
