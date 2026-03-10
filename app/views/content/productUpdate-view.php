@@ -115,27 +115,36 @@
 		  	</div>
 		</div>
 
-		<div class="columns">
-		  	<div class="column">
-				<label>Categoría <?php echo CAMPO_OBLIGATORIO; ?></label>
-		    	<div class="select is-fullwidth">
-				  	<select name="producto_categoria" required>
-						<option value="" selected="" >Seleccione una opción</option>
-				    	<?php
-                            $datos_categorias=$insLogin->seleccionarDatos("Normal","categoria","*",0);
-                            $cc=1;
-                            while($campos_categoria=$datos_categorias->fetch()){
-                            	if($campos_categoria['categoria_id']==$datos['categoria_id']){
-                            		echo '<option value="'.$campos_categoria['categoria_id'].'" selected="" >'.$cc.' - '.$campos_categoria['categoria_nombre'].' (Actual)</option>';
-                            	}else{
-                                	echo '<option value="'.$campos_categoria['categoria_id'].'">'.$cc.' - '.$campos_categoria['categoria_nombre'].'</option>';
-                            	}
-                                $cc++;
-                            }
-                        ?>
-				  	</select>
-				</div>
-		  	</div>
+		<div class="column">
+			<label>Categoría / Subcategoría <?php echo CAMPO_OBLIGATORIO; ?></label>
+			<div class="select is-fullwidth">
+				<select name="producto_categoria" required>
+					<?php
+
+						$insCategory = new app\controllers\categoryController();
+
+						$datos_cat = $insCategory->seleccionarDatos("Normal", "categoria", "*", "ORDER BY categoria_nombre ASC");
+						$todas = $datos_cat->fetchAll();
+
+						foreach($todas as $p){
+							if($p['categoria_padre_id'] == NULL || $p['categoria_padre_id'] == "" || $p['categoria_padre_id'] == "0"){
+								
+								echo '<optgroup label="📂 '.$p['categoria_nombre'].'">';
+								
+								foreach($todas as $h){
+									if($h['categoria_padre_id'] == $p['categoria_id']){
+										$seleccionado = ($h['categoria_id'] == $datos['categoria_id']) ? 'selected=""' : '';
+										$texto_actual = ($h['categoria_id'] == $datos['categoria_id']) ? ' (Actual)' : '';
+
+										echo '<option value="'.$h['categoria_id'].'" '.$seleccionado.'>'.$h['categoria_nombre'].$texto_actual.'</option>';
+									}
+								}
+								echo '</optgroup>';
+							}
+						}
+					?>
+				</select>
+			</div>
 		</div>
 
 		<p class="has-text-centered">

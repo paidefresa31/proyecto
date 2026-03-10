@@ -180,16 +180,21 @@ class productController extends mainModel
 			$orden_sql = "producto.producto_stock DESC, producto.producto_nombre ASC";
 		}
 
-		$campos = "producto.producto_id,producto.producto_codigo,producto.producto_nombre,producto.producto_marca,producto.producto_modelo,producto.producto_precio,producto.producto_costo,producto.producto_stock,producto.producto_stock_min,producto.producto_stock_max,producto.producto_estado,producto.producto_foto,producto.producto_unidad,categoria.categoria_nombre";
+		$campos = "producto.producto_id,producto.producto_codigo,producto.producto_nombre,producto.producto_marca,producto.producto_modelo,producto.producto_precio,producto.producto_costo,producto.producto_stock,producto.producto_stock_min,producto.producto_stock_max,producto.producto_estado,producto.producto_foto,producto.producto_unidad,categoria.categoria_nombre AS subcategoria_nombre, padre.categoria_nombre AS categoria_padre_nombre";
+
+		// Definimos la unión de tablas una sola vez para simplificar
+		$join_sql = " FROM producto 
+              INNER JOIN categoria ON producto.categoria_id=categoria.categoria_id 
+              LEFT JOIN categoria AS padre ON categoria.categoria_padre_id=padre.categoria_id ";
 
 		if (isset($busqueda) && $busqueda != "") {
-			$consulta_datos = "SELECT $campos FROM producto INNER JOIN categoria ON producto.categoria_id=categoria.categoria_id WHERE producto_codigo LIKE '%$busqueda%' OR producto_nombre LIKE '%$busqueda%' ORDER BY $orden_sql LIMIT $inicio,$registros";
+			$consulta_datos = "SELECT $campos $join_sql WHERE producto_codigo LIKE '%$busqueda%' OR producto_nombre LIKE '%$busqueda%' ORDER BY $orden_sql LIMIT $inicio,$registros";
 			$consulta_total = "SELECT COUNT(producto_id) FROM producto WHERE producto_codigo LIKE '%$busqueda%' OR producto_nombre LIKE '%$busqueda%'";
 		} elseif ($categoria_id > 0) {
-			$consulta_datos = "SELECT $campos FROM producto INNER JOIN categoria ON producto.categoria_id=categoria.categoria_id WHERE producto.categoria_id='$categoria_id' ORDER BY $orden_sql LIMIT $inicio,$registros";
+			$consulta_datos = "SELECT $campos $join_sql WHERE producto.categoria_id='$categoria_id' ORDER BY $orden_sql LIMIT $inicio,$registros";
 			$consulta_total = "SELECT COUNT(producto_id) FROM producto WHERE categoria_id='$categoria_id'";
 		} else {
-			$consulta_datos = "SELECT $campos FROM producto INNER JOIN categoria ON producto.categoria_id=categoria.categoria_id ORDER BY $orden_sql LIMIT $inicio,$registros";
+			$consulta_datos = "SELECT $campos $join_sql ORDER BY $orden_sql LIMIT $inicio,$registros";
 			$consulta_total = "SELECT COUNT(producto_id) FROM producto";
 		}
 
@@ -251,7 +256,10 @@ class productController extends mainModel
 							<td>' . $rows['producto_codigo'] . '</td>
 							<td>' . $rows['producto_nombre'] . '</td>
                             <td>' . $rows['producto_marca'] . ' ' . $rows['producto_modelo'] . '</td>
-							<td>' . $rows['categoria_nombre'] . '</td>
+							<td>
+								<span class="has-text-weight-bold">' . ($rows['categoria_padre_nombre'] ?? 'Sin Categoría') . '</span><br>
+								<span class="is-size-7 has-text-grey"><i class="fas fa-level-up-alt fa-rotate-90"></i> ' . $rows['subcategoria_nombre'] . '</span>
+							</td>
 							
                             <td>
                                 <span>$' . $rows['producto_costo'] . '</span><br>
