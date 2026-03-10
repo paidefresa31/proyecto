@@ -79,7 +79,14 @@
 
             $fecha=date("Y-m-d"); $total=0;
             foreach($_SESSION['datos_compra'] as $productos){ $total+=$productos['subtotal']; }
-            $codigo_compra = $this->generarCodigoAleatorio(10, rand(1,99));
+            
+            // --- GENERADOR DE CÓDIGO BLINDADO (COMPRAS) ---
+            $consulta_correlativo = $this->ejecutarConsulta("SELECT MAX(compra_id) AS id_maximo FROM compra");
+            $resultado_correlativo = $consulta_correlativo->fetch();
+            $siguiente_numero = (int)$resultado_correlativo['id_maximo'] + 1;
+            
+            $codigo_compra = "COM-" . str_pad($siguiente_numero, 6, "0", STR_PAD_LEFT);
+            // ----------------------------------------------
             
             $datos_compra_reg=[
 				["campo_nombre"=>"compra_codigo","campo_marcador"=>":Codigo","campo_valor"=>$codigo_compra],
@@ -97,18 +104,21 @@
                     $datos_detalle=[ ["campo_nombre"=>"compra_codigo","campo_marcador"=>":Codigo","campo_valor"=>$codigo_compra], ["campo_nombre"=>"producto_id","campo_marcador"=>":Producto","campo_valor"=>$detalle['producto_id']], ["campo_nombre"=>"compra_detalle_cantidad","campo_marcador"=>":Cantidad","campo_valor"=>$detalle['compra_cantidad']], ["campo_nombre"=>"compra_detalle_precio","campo_marcador"=>":Precio","campo_valor"=>$detalle['compra_costo']] ];
                     $this->guardarDatos("compra_detalle",$datos_detalle);
 
-                    // Obtenemos el precio actual del producto antes de actualizar
-$info_prod = $this->conectar()->query("SELECT producto_costo, producto_precio FROM producto WHERE producto_id='".$detalle['producto_id']."'")->fetch();
+                    // --- AJUSTE DE PRECIO INTELIGENTE ---
+                    $info_prod = $this->conectar()->prepare("SELECT producto_costo, producto_precio FROM producto WHERE producto_id=:ID");
+                    $info_prod->bindValue(":ID", $detalle['producto_id']);
+                    $info_prod->execute();
+                    $info_prod = $info_prod->fetch();
 
-$nuevo_costo = $detalle['compra_costo'];
+                    $nuevo_costo = $detalle['compra_costo'];
 
-// Si el costo cambia, ajustamos el precio respetando el porcentaje de ganancia que ya tenía el producto
-if($info_prod['producto_costo'] > 0){
-    $porcentaje_ganancia = ($info_prod['producto_precio'] - $info_prod['producto_costo']) / $info_prod['producto_costo'];
-    $nuevo_precio_venta = $nuevo_costo + ($nuevo_costo * $porcentaje_ganancia);
-} else {
-    $nuevo_precio_venta = $nuevo_costo * 1.20; // Solo aplica 20% si el costo anterior era 0
-}
+                    if($info_prod['producto_costo'] > 0){
+                        $porcentaje_ganancia = ($info_prod['producto_precio'] - $info_prod['producto_costo']) / $info_prod['producto_costo'];
+                        $nuevo_precio_venta = $nuevo_costo + ($nuevo_costo * $porcentaje_ganancia);
+                    } else {
+                        $nuevo_precio_venta = $nuevo_costo * 1.20; 
+                    }
+                    // ------------------------------------
                     
                     $update_producto = $this->conectar()->prepare("UPDATE producto SET producto_stock = producto_stock + :Cantidad, producto_costo = :Costo, producto_precio = :Precio WHERE producto_id = :ID");
                     $update_producto->bindValue(":Cantidad", $detalle['compra_cantidad']);
