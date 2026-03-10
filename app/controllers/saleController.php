@@ -470,7 +470,8 @@ $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
                                     <span class="has-text-link is-size-7">'.$str_bs.'</span>
                                 </td>
                                 <td>
-                                    <button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_invoice(\''.APP_URL.'app/pdf/invoice.php?code='.$rows['venta_codigo'].'\')" title="Imprimir Factura (PDF)" ><i class="fas fa-file-pdf fa-fw"></i></button> 
+                                    <button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_invoice(\''.APP_URL.'app/pdf/invoice.php?code='.$rows['venta_codigo'].'\')" title="Factura Fiscal (Bs + IVA)" ><i class="fas fa-file-invoice-dollar fa-fw"></i></button> 
+                                    <button type="button" class="button is-info is-outlined is-rounded is-small btn-sale-options" onclick="print_invoice(\''.APP_URL.'app/pdf/delivery_note.php?code='.$rows['venta_codigo'].'\')" title="Nota de Entrega ($ sin IVA)" ><i class="fas fa-file-alt fa-fw"></i></button> 
                                     <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Información de venta" ><i class="fas fa-shopping-bag fa-fw"></i></a> 
                                     <form class="FormularioAjax is-inline-block" action="'.APP_URL.'app/ajax/ventaAjax.php" method="POST" autocomplete="off" ><input type="hidden" name="modulo_venta" value="eliminar_venta"><input type="hidden" name="venta_id" value="'.$rows['venta_id'].'"><button type="submit" class="button is-danger is-rounded is-small" title="Eliminar venta / Devolver Stock" ><i class="far fa-trash-alt fa-fw"></i></button></form>
                                 </td>

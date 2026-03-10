@@ -2,11 +2,9 @@
 	$peticion_ajax=true;
 	$code=(isset($_GET['code'])) ? $_GET['code'] : 0;
 
-	/*---------- Incluyendo configuraciones ----------*/
 	require_once "../../config/app.php";
     require_once "../../autoload.php";
 
-	/*---------- Instancia al controlador venta ----------*/
 	use app\controllers\saleController;
 	$ins_venta = new saleController();
 
@@ -41,10 +39,10 @@
 		$pdf->Cell(150,9,iconv("UTF-8", "ISO-8859-1","Email: ".$datos_empresa['empresa_email']),0,0,'L');
 		$pdf->Ln(10);
 
-        // TÍTULO: RECIBO DE PAGO
+        // Título de Nota de Entrega
         $pdf->SetFont('Arial','B',14);
 		$pdf->SetTextColor(39,39,51);
-		$pdf->Cell(0,10,iconv("UTF-8", "ISO-8859-1","RECIBO DE PAGO"),0,1,'C');
+		$pdf->Cell(0,10,iconv("UTF-8", "ISO-8859-1","NOTA DE ENTREGA"),0,1,'C');
 		$pdf->Ln(2);
 
 		$pdf->SetFont('Arial','',10);
@@ -93,8 +91,8 @@
 		$pdf->SetTextColor(255,255,255);
 		$pdf->Cell(100,8,iconv("UTF-8", "ISO-8859-1",'Descripción'),1,0,'C',true);
 		$pdf->Cell(15,8,iconv("UTF-8", "ISO-8859-1",'Cant.'),1,0,'C',true);
-		$pdf->Cell(32,8,iconv("UTF-8", "ISO-8859-1",'Precio (Bs)'),1,0,'C',true);
-		$pdf->Cell(34,8,iconv("UTF-8", "ISO-8859-1",'Subtotal (Bs)'),1,0,'C',true);
+		$pdf->Cell(32,8,iconv("UTF-8", "ISO-8859-1",'Precio ($)'),1,0,'C',true);
+		$pdf->Cell(34,8,iconv("UTF-8", "ISO-8859-1",'Subtotal ($)'),1,0,'C',true);
 		$pdf->Ln(8);
 
 		$pdf->SetFont('Arial','',9);
@@ -103,69 +101,45 @@
 		$venta_detalle=$ins_venta->seleccionarDatos("Normal","venta_detalle LEFT JOIN producto ON venta_detalle.producto_id=producto.producto_id WHERE venta_codigo='".$datos_venta['venta_codigo']."'","*",0);
 		$venta_detalle=$venta_detalle->fetchAll();
 
-        $tasa_bcv = (isset($datos_venta['venta_tasa_bcv']) && $datos_venta['venta_tasa_bcv'] > 0) ? $datos_venta['venta_tasa_bcv'] : 1;
-
 		foreach($venta_detalle as $detalle){
             $descripcion = $detalle['venta_detalle_descripcion'];
             $marca_modelo = trim((isset($detalle['producto_marca']) ? $detalle['producto_marca'] : "") . " " . (isset($detalle['producto_modelo']) ? $detalle['producto_modelo'] : ""));
+            
             if($marca_modelo != ""){ $descripcion .= " - " . $marca_modelo; }
-
-            // Precios mostrados incluyen IVA
-            $precio_bs = $detalle['venta_detalle_precio_venta'] * $tasa_bcv;
-            $subtotal_bs = $detalle['venta_detalle_total'] * $tasa_bcv;
 
 			$pdf->Cell(100,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($descripcion,80,"...")),'L B',0,'C');
 			$pdf->Cell(15,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_detalle_cantidad']),'L B',0,'C');
-			$pdf->Cell(32,7,iconv("UTF-8", "ISO-8859-1","Bs. ".number_format($precio_bs, 2, ',', '.')),'L B',0,'C');
-			$pdf->Cell(34,7,iconv("UTF-8", "ISO-8859-1","Bs. ".number_format($subtotal_bs, 2, ',', '.')),'L R B',0,'C');
+			$pdf->Cell(32,7,iconv("UTF-8", "ISO-8859-1","$ ".number_format($detalle['venta_detalle_precio_venta'],2,'.',',')),'L B',0,'C');
+			$pdf->Cell(34,7,iconv("UTF-8", "ISO-8859-1","$ ".number_format($detalle['venta_detalle_total'],2,'.',',')),'L R B',0,'C');
 			$pdf->Ln(7);
 		}
 
-        if($pdf->GetY() > 215){ $pdf->AddPage(); }
-        $pdf->SetY(-60);
+        if($pdf->GetY() > 220){ $pdf->AddPage(); }
+        $pdf->SetY(-55);
 
-        // --- CÁLCULOS DEL TOTAL EN BS (EXTRACCIÓN DE IVA PARA NO QUEBRAR LA CAJA) ---
-        $total_general_bs = $datos_venta['venta_total'] * $tasa_bcv;
-        $base_imponible_bs = $total_general_bs / 1.16; // Se extrae la base
-        $iva_16_bs = $total_general_bs - $base_imponible_bs; // Se calcula cuánto fue de IVA
-
-        // Fila 1: Método de Pago | Base Imponible
+        // Fila 1: Método de Pago | Total USD
         $pdf->SetFont('Arial','',10);
         $metodo = isset($datos_venta['venta_metodo_pago']) ? $datos_venta['venta_metodo_pago'] : "N/A";
         $pdf->Cell(90, 7, iconv("UTF-8", "ISO-8859-1", "Método de Pago: " . $metodo), 0, 0, 'L');
         
         $pdf->SetFont('Arial','B',10);
-        $pdf->Cell(57, 7, iconv("UTF-8", "ISO-8859-1", "BASE IMPONIBLE (Bs):"), 0, 0, 'R');
-        $pdf->Cell(34, 7, iconv("UTF-8", "ISO-8859-1", "Bs. ".number_format($base_imponible_bs, 2, ',', '.')), 0, 1, 'C');
+        $pdf->Cell(57, 7, iconv("UTF-8", "ISO-8859-1", "TOTAL PAGADO ($):"), 0, 0, 'R');
+        $pdf->Cell(34, 7, iconv("UTF-8", "ISO-8859-1", "$ ".number_format($datos_venta['venta_total'], 2, '.', ',')), 0, 1, 'C');
 
-        // Fila 2: Referencia | IVA 16%
+        // Fila 2: Referencia
         $pdf->SetFont('Arial','',10);
         $referencia = (isset($datos_venta['venta_referencia']) && $datos_venta['venta_referencia']!="") ? $datos_venta['venta_referencia'] : "N/A";
         $pdf->Cell(90, 7, iconv("UTF-8", "ISO-8859-1", "Ref. Operación: " . $referencia), 0, 0, 'L');
-
-        $pdf->SetFont('Arial','B',10);
-        $pdf->Cell(57, 7, iconv("UTF-8", "ISO-8859-1", "I.V.A (16%):"), 0, 0, 'R');
-        $pdf->Cell(34, 7, iconv("UTF-8", "ISO-8859-1", "Bs. ".number_format($iva_16_bs, 2, ',', '.')), 0, 1, 'C');
-
-        // Fila 3: Tasa | Total General
-        $str_tasa = ($tasa_bcv > 1) ? 'Bs. '.number_format($tasa_bcv, 2, ',', '.') : 'N/A';
-        $pdf->SetFont('Arial','',10);
-        $pdf->Cell(90, 7, iconv("UTF-8", "ISO-8859-1", "Tasa BCV Aplicada: " . $str_tasa), 0, 0, 'L');
-        
-        $pdf->SetTextColor(32,100,210);
-        $pdf->SetFont('Arial','B',11);
-        $pdf->Cell(57, 7, iconv("UTF-8", "ISO-8859-1", "TOTAL PAGADO (Bs):"), 0, 0, 'R');
-        $pdf->Cell(34, 7, iconv("UTF-8", "ISO-8859-1", "Bs. ".number_format($total_general_bs, 2, ',', '.')), 0, 1, 'C');
-        
-        $pdf->SetTextColor(39,39,51); // Reset de color
 		
-    
+        $pdf->Ln(12);
 		$pdf->SetFont('Arial','',9);
-		$pdf->MultiCell(0,9,iconv("UTF-8", "ISO-8859-1","*** Este es un recibo de pago. Para cualquier reclamo o cambio es indispensable presentar este recibo. ***"),0,'C',false);
+        
+        // NUEVO MENSAJE PARA NOTA DE ENTREGA (DOCUMENTO NO FISCAL)
+		$pdf->MultiCell(0,9,iconv("UTF-8", "ISO-8859-1","*** Verifique su mercancía al recibirla. Para cualquier reclamo o cambio es indispensable presentar esta Nota de Entrega. ***"),0,'C',false);
 
-		$pdf->Output("I","Recibo_".$datos_venta['venta_codigo'].".pdf",true);
+		$pdf->Output("I","Nota_Entrega_".$datos_venta['venta_codigo'].".pdf",true);
 
 	}else{
-        echo "Factura no encontrada";
+        echo "Nota no encontrada";
     } 
 ?>
