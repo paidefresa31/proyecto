@@ -417,11 +417,11 @@
 
                         </div>
                     </div>
-                    <div id="tabla_productos"></div>
+                    <div id="tabla_productos" class="table-container mt-4">
+                    </div>
                 </div>
             </div>
             <script>
-
                 //Funcion para cargar productos por categoria
                 function cargar_por_categoria(id) {
                     let filtroMarca = document.querySelector('#filtro_marca');
