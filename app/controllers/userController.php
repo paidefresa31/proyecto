@@ -96,7 +96,7 @@
             $registrar_usuario=$this->guardarDatos("usuario",$usuario_datos_reg);
 
             if($registrar_usuario->rowCount()==1){
-                $alerta=["tipo"=>"limpiar","titulo"=>"Éxito","texto"=>"Usuario registrado correctamente","icono"=>"success"];
+                $alerta=["tipo"=>"redireccionar","titulo"=>"Éxito","texto"=>"Usuario registrado correctamente","icono"=>"success" ,"url" => APP_URL."userList/"];
             }else{
                 if(is_file($img_dir.$foto)){ chmod($img_dir.$foto,0777); unlink($img_dir.$foto); }
                 $alerta=["tipo"=>"simple","titulo"=>"Error","texto"=>"No se pudo registrar el usuario","icono"=>"error"];

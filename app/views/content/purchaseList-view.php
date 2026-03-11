@@ -12,7 +12,7 @@
                 <input type="hidden" name="modulo_url" value="purchaseList">
                 <div class="field is-grouped">
                     <p class="control is-expanded">
-                        <input class="input is-rounded" type="text" name="txt_buscador" placeholder="Código de compra o Proveedor" maxlength="30" >
+                        <input class="input is-rounded" type="text" name="txt_buscador" placeholder="Código de compra o Proveedor" maxlength="30" autocomplete="off">
                     </p>
                     <p class="control">
                         <button class="button is-info" type="submit" >Buscar</button>

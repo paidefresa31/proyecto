@@ -35,13 +35,13 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Nombres <?php echo CAMPO_OBLIGATORIO;?></label>
-				  	<input class="input" type="text" name="usuario_nombre" value="<?php echo $datos['usuario_nombre']; ?>" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required >
+				  	<input class="input" type="text" name="usuario_nombre" value="<?php echo $datos['usuario_nombre']; ?>" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required autocomplete="off">
 				</div>
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
 					<label>Apellidos <?php echo CAMPO_OBLIGATORIO;?></label>
-				  	<input class="input" type="text" name="usuario_apellido" value="<?php echo $datos['usuario_apellido']; ?>" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required >
+				  	<input class="input" type="text" name="usuario_apellido" value="<?php echo $datos['usuario_apellido']; ?>" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required autocomplete="off">
 				</div>
 		  	</div>
 		</div>
@@ -49,13 +49,13 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Usuario <?php echo CAMPO_OBLIGATORIO;?></label>
-				  	<input class="input" type="text" name="usuario_usuario" value="<?php echo $datos['usuario_usuario']; ?>" pattern="[a-zA-Z0-9]{4,20}" maxlength="20" required >
+				  	<input class="input" type="text" name="usuario_usuario" value="<?php echo $datos['usuario_usuario']; ?>" pattern="[a-zA-Z0-9]{4,20}" maxlength="20" required autocomplete="off">
 				</div>
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
 					<label>Email <?php echo CAMPO_OBLIGATORIO;?></label>
-				  	<input class="input" type="email" name="usuario_email" value="<?php echo $datos['usuario_email']; ?>" maxlength="70" required >
+				  	<input class="input" type="email" name="usuario_email" value="<?php echo $datos['usuario_email']; ?>" maxlength="70" required autocomplete="off">
 				</div>
 		  	</div>
 		</div>

@@ -5,7 +5,7 @@
 	class searchController extends mainModel{
 		public function modulosBusquedaControlador($modulo){
 			$listaModulos=[
-                'userSearch','cashierSearch','clientSearch','categorySearch','productSearch','saleSearch',
+                'userSearch','cashierSearch','subcategorySearch',"subcategorylist",'clientSearch','categorySearch','productSearch','saleSearch',
                 'userList', 'productList', 'cashierList', 'clientList', 'categoryList', 'saleList', 'purchaseList', 'providerList'
             ];
 			if(in_array($modulo, $listaModulos)){

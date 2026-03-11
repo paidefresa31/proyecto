@@ -47,9 +47,14 @@ document.addEventListener("DOMContentLoaded", function(){
             });
         });
 
-        // FASE 3: CAPTURAR EL ENTER
+        // FASE 3: CAPTURAR EL ENTER 
         contenedor.addEventListener("keydown", function(e){
             if(e.key === "Enter" && e.target.tagName !== "TEXTAREA"){
+                // Si el campo tiene nombre de búsqueda, NO procesamos como formulario Ajax
+                if(e.target.name === "busqueda_inicial" || e.target.name === "busqueda_eliminar"){
+                    return; // Permite que el buscador funcione de forma nativa/tradicional
+                }
+                
                 e.preventDefault();
                 procesarDatosDeCaja(contenedor);
             }
@@ -101,69 +106,77 @@ document.addEventListener("DOMContentLoaded", function(){
    FUNCIÓN MAESTRA DE ENVÍO INVISIBLE
 ================================================================ */
 function procesarDatosDeCaja(contenedor) {
-    // 1. Validar campos obligatorios a mano (porque ya no hay form HTML)
+    // 1. Detectar buscador
+    let esBuscador = contenedor.querySelector('input[name="modulo_buscador"]');
+
+    // 2. Validar campos obligatorios
     let camposObligatorios = contenedor.querySelectorAll('[required]');
     let todoValido = true;
     camposObligatorios.forEach(campo => {
         if(!campo.value.trim()){
             todoValido = false;
-            campo.style.border = "1px solid red"; // Resalta en rojo si está vacío
+            campo.classList.add("is-danger"); 
         } else {
-            campo.style.border = "";
+            campo.classList.remove("is-danger");
         }
     });
 
     if(!todoValido){
-        Swal.fire('Atención', 'Por favor, llena todos los campos obligatorios marcados en rojo.', 'warning');
+        Swal.fire('Atención', 'Por favor, llena los campos marcados.', 'warning');
         return;
     }
 
-    // 2. Alerta de confirmación
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Quieres realizar la acción solicitada",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, realizar',
-        cancelButtonText: 'No, cancelar'
-    }).then((result) => {
-        if (result.isConfirmed){
-            
-            // 3. Empaquetar datos como un fantasma
-            let data = new FormData();
-            let inputs = contenedor.querySelectorAll("input, select, textarea");
-            
-            inputs.forEach(input => {
-                if(input.name){
-                    if(input.type === "checkbox" || input.type === "radio"){
-                        if(input.checked) data.append(input.name, input.value);
-                    } else if (input.type === "file"){
-                        if(input.files.length > 0) data.append(input.name, input.files[0]);
-                    } else {
-                        data.append(input.name, input.value);
-                    }
-                }
-            });
+    // 3. Función de envío (Captura total de datos)
+    const realizarEnvio = () => {
+        let data = new FormData();
+        
+        // Seleccionamos TODOS los elementos con atributo name, sin excepciones
+        let inputs = contenedor.querySelectorAll("[name]");
+        
+        inputs.forEach(input => {
+            if(input.type === "checkbox" || input.type === "radio"){
+                if(input.checked) data.append(input.name, input.value);
+            } else if (input.type === "file"){
+                if(input.files.length > 0) data.append(input.name, input.files[0]);
+            } else {
+                // Aquí entran los 'hidden' que el controlador necesita
+                data.append(input.name, input.value);
+            }
+        });
 
-            let config = {
-                method: contenedor.getAttribute("data-method"),
-                body: data
-            };
+        let config = {
+            method: contenedor.getAttribute("data-method") || "POST",
+            body: data
+        };
 
-            // 4. Enviar a PHP
-            fetch(contenedor.getAttribute("data-action"), config)
-            .then(respuesta => respuesta.json())
-            .then(respuesta => { 
-                return alertas_ajax(respuesta, contenedor);
-            })
-            .catch(error => {
-                console.error("Error AJAX:", error);
-                Swal.fire({ icon: 'error', title: 'Ocurrió un error', text: 'No se pudo procesar. Revisa la consola.' });
-            });
-        }
-    });
+        fetch(contenedor.getAttribute("data-action"), config)
+        .then(respuesta => respuesta.json())
+        .then(respuesta => { 
+            // Esto procesará la redirección que vimos en tus videos
+            return alertas_ajax(respuesta, contenedor);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    };
+
+    // 4. Ejecución
+    if (esBuscador) {
+        realizarEnvio();
+    } else {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Quieres realizar la acción solicitada",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, realizar',
+            cancelButtonText: 'No, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                realizarEnvio();
+            }
+        });
+    }
 }
 
 /* ================================================================
@@ -186,8 +199,9 @@ function alertas_ajax(alerta, contenedorActual){
                 });
             }
         });
-}else if(alerta.tipo == "redireccionar"){
-        // Agregué el Swal.fire para que el usuario vea el éxito antes de irse
+    } else if (alerta.tipo == "redireccionar") {
+    // Si la alerta tiene título o texto (es un registro/edición), mostramos el Swal
+    if (alerta.titulo && alerta.titulo.trim() !== "") {
         Swal.fire({ 
             icon: alerta.icono, 
             title: alerta.titulo, 
@@ -198,7 +212,11 @@ function alertas_ajax(alerta, contenedorActual){
                 window.location.href = alerta.url; 
             }
         });
+    } else {
+        // Si no tiene título (es una búsqueda), redireccionamos DIRECTO sin mostrar nada
+        window.location.href = alerta.url;
     }
+}
 }
 
 /* Boton cerrar sesion */

@@ -4,73 +4,51 @@
 </div>
 
 <div class="container pb-6 pt-6">
-    <div class="table-container">
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-            <thead>
-                <tr class="has-text-centered">
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th>Ubicación</th>
-                    <th>Categoría Principal (Padre)</th>
-                    <th colspan="2">Opciones</th>
-                </tr>
-            </thead>
-<tbody>
+    <div class="box">
+        <?php
+            // Definimos la variable de búsqueda basada en la sesión del módulo actual
+            $busqueda = $_SESSION[$url[0]] ?? "";
+
+            if(empty($busqueda)){ 
+        ?>
+        <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
+            <input type="hidden" name="modulo_buscador" value="buscar">
+            <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>"> 
+            <div class="field is-grouped">
+                <p class="control is-expanded">
+                    <input class="input is-rounded" type="text" name="txt_buscador" placeholder="Busca subcategorías por nombre..." pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" maxlength="30" autocomplete="off">
+                </p>
+                <p class="control">
+                    <button class="button is-info is-rounded" type="submit" >
+                        <i class="fas fa-search"></i> &nbsp; Buscar
+                    </button>
+                </p>
+            </div>
+        </form>
+        <?php }else{ ?>
+        <form class="has-text-left FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
+            <input type="hidden" name="modulo_buscador" value="eliminar">
+            <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>"> 
+            <p><i class="fas fa-search fa-fw"></i> &nbsp; Estás buscando: <strong>“<?php echo $busqueda; ?>”</strong>
+                &nbsp; <button type="submit" class="button is-danger is-rounded is-small">
+                    <i class="fas fa-times"></i> &nbsp; Limpiar búsqueda
+                </button>
+            </p>
+        </form>
+        <?php } ?>
+    </div>
+
     <?php
         use app\controllers\categoryController;
-        $insCategory = new categoryController();
+        $insSubCategoria = new categoryController();
 
-        $datos = $insCategory->seleccionarDatos("Normal", "categoria", "*", "");
-        
-        $contador = 1;
-        if($datos && $datos->rowCount() > 0){
-            while($rows = $datos->fetch()){
-
-                // FILTRO MANUAL: Si categoria_padre_id es NULL o vacío, 
-                // saltamos a la siguiente iteración (no mostramos las principales)
-                if($rows['categoria_padre_id'] == NULL || $rows['categoria_padre_id'] == "" || $rows['categoria_padre_id'] == "0"){
-                    continue; 
-                }
-
-                $id_padre = $rows['categoria_padre_id'];
-                $datos_padre = $insCategory->seleccionarDatos("Normal", "categoria", "categoria_nombre", "WHERE categoria_id='$id_padre'");
-                $padre = $datos_padre->fetch();
-
-                echo '
-                <tr class="has-text-centered" >
-                    <td>'.$contador.'</td>
-                    <td>'.$rows['categoria_nombre'].'</td>
-                    <td>'.$rows['categoria_ubicacion'].'</td>
-                    <td><strong>'.($padre['categoria_nombre'] ?? "Sin Padre").'</strong></td>
-                    
-                    <td>
-                        <a href="'.APP_URL.'productCategory/'.$rows['categoria_id'].'/" class="button is-info is-rounded is-small" title="Ver productos">
-                            <i class="fas fa-boxes fa-fw"></i>
-                        </a>
-                    </td>
-
-                    <td>
-                        <a href="'.APP_URL.'subcategoryUpdate/'.$rows['categoria_id'].'/" class="button is-success is-rounded is-small" title="Actualizar">
-                            <i class="fas fa-sync fa-fw"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <form class="FormularioAjax" action="'.APP_URL.'app/ajax/categoriaAjax.php" method="POST" autocomplete="off" >
-                            <input type="hidden" name="modulo_categoria" value="eliminar">
-                            <input type="hidden" name="categoria_id" value="'.$rows['categoria_id'].'">
-                            <button type="submit" class="button is-danger is-rounded is-small" title="Eliminar">
-                                <i class="far fa-trash-alt fa-fw"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>';
-                $contador++;
-            }
-        } else {
-            echo '<tr class="has-text-centered"><td colspan="6">No hay subcategorías registradas</td></tr>';
-        }
+        /* Llamamos al controlador especializado en subcategorías.
+            Este método ya genera:
+            1. La tabla con los estilos correctos.
+            2. La consulta SQL con IS NOT NULL (solo subcategorías).
+            3. La columna de "Categoría Principal".
+            4. El paginador de tablas.
+        */
+        echo $insSubCategoria->listarSubcategoriaControlador($url[1], 15, $url[0], $busqueda);
     ?>
-</tbody>
-        </table>
-    </div>
 </div>
