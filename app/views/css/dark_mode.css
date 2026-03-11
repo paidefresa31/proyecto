@@ -3,6 +3,21 @@ img.logo-dark {
     display: none !important;
 }
 
+/* Fondo por defecto (Claro) */
+.main-container {
+    background-image: url('../img/white.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    transition: background-image 0.5s ease-in-out !important;
+}
+
+/* Fondo cuando se activa el modo oscuro */
+/* Importante: body.dark-mode espacio .main-container */
+body.dark-mode .main-container {
+    background-image: url('../img/dark.jpg') !important;
+}
+
 body.dark-mode img.logo-light {
     display: none !important;
 }
@@ -134,7 +149,8 @@ body.dark-mode .file-name {
     border-color: #444 !important;
 }
 
-/* --- MÓDULO 6: BOTONES Y ELEMENTOS DE ACCIÓN --- */
+/* --- MÓDULO 6: BOTONES Y ELEMENTOS DE ACCIÓN (VERSIÓN FINAL) --- */
+
 body.dark-mode button[type="submit"],
 body.dark-mode .button.is-info {
     background: linear-gradient(145deg, #0984e3, #74b9ff) !important;
@@ -143,17 +159,60 @@ body.dark-mode .button.is-info {
     box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3) !important;
 }
 
+/* El botón circular de cristal */
+button#theme-toggle.button.is-rounded {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #363636 !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.4s ease !important;
+    overflow: hidden !important; /* Evita que el SVG se salga al girar */
+}
+
+/* Modo oscuro: Resplandor dorado */
+body.dark-mode button#theme-toggle.button.is-rounded {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #f1c40f !important;
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.2) !important;
+}
+
+/* LA CLAVE: Animamos el SPAN contenedor, no el SVG directamente */
+#theme-toggle .icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+
+/* Cuando el modo oscuro está activo, el contenedor DA LA VUELTA */
+body.dark-mode #theme-toggle .icon {
+    transform: rotate(360deg) scale(1.15) !important;
+}
+
+/* Evitar que el SVG herede estilos extraños */
+#theme-toggle svg {
+    display: block !important;
+    margin: 0 !important;
+}
+
+/* Otros botones */
 body.dark-mode button[type="reset"],
 body.dark-mode .button.is-link.is-outlined {
     background-color: #2d3436 !important;
     color: #dfe6e9 !important;
     border: 1px solid #636e72 !important;
-}
-
-body.dark-mode button[type="reset"]:hover {
-    background-color: #ff7675 !important;
-    border-color: #ff7675 !important;
-    color: #ffffff !important;
 }
 
 body.dark-mode .pagination-link,
@@ -163,7 +222,6 @@ body.dark-mode .pagination-previous {
     color: #ffffff !important;
     border-color: #444 !important;
 }
-
 /* --- MÓDULO 7: COMPONENTES VISUALES --- */
 body.dark-mode .card, 
 body.dark-mode .box,
@@ -236,8 +294,6 @@ body.dark-mode .swal2-confirm {
 }
 
 /* --- MÓDULO 10: MISCELÁNEOS Y EFECTOS --- */
-#theme-toggle { transition: transform 0.2s ease;color: #ffe135 !important; }
-#theme-toggle:active { transform: scale(0.9); color: #00f2ff !important;}
 
 body.dark-mode .menu-principal li a:hover i {
     filter: brightness(1.3) drop-shadow(0 0 5px currentColor) !important;

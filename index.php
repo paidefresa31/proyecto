@@ -27,9 +27,9 @@
     </script>
 
     <div style="position: fixed; top: 4rem; right: 1.5rem; z-index: 9999;">
-        <button id="theme-toggle" class="button is-rounded is-dark is-outlined" style="box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+        <button id="theme-toggle" class="button is-rounded">
             <span class="icon">
-                <i id="theme-icon" class="fas fa-moon"></i>
+                <i id="theme-icon" class="fas fa-moon"></i> 
             </span>
         </button>
     </div>
