@@ -54,6 +54,46 @@ document.addEventListener("DOMContentLoaded", function(){
                 procesarDatosDeCaja(contenedor);
             }
         });
+
+        // FASE 4: ACTIVAR BOTONES DE LIMPIAR
+
+        let botonesReset = contenedor.querySelectorAll('button[type="reset"]');
+        
+        botonesReset.forEach(btn => {
+
+            btn.type = "button"; 
+            
+            btn.addEventListener("click", function(e){
+                e.preventDefault();
+                
+                // Obtenemos todos los inputs que están dentro del mismo contenedor que el botón
+                let campos = contenedor.querySelectorAll("input, select, textarea");
+
+                campos.forEach(campo => {
+                    // Limpiamos los valores
+                    if (campo.type !== 'hidden') {
+                        campo.value = "";
+                    }
+                    
+                    if (campo.tagName.toLowerCase() === "select") {
+                        campo.selectedIndex = 0;
+                    }
+
+                    if (campo.type === "checkbox" || campo.type === "radio") {
+                        campo.checked = false;
+                    }
+
+                    campo.style.border = "";
+                });
+
+                let textoFoto = contenedor.querySelector(".file-name");
+                if(textoFoto) {
+                    textoFoto.textContent = "JPG, JPEG, PNG. (MAX 5MB)";
+                }
+
+                console.log("Formulario limpiado con éxito.");
+            });
+        });
     });
 });
 
