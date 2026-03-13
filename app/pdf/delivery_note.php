@@ -111,11 +111,17 @@
             
             if($marca_modelo != ""){ $descripcion .= " - " . $marca_modelo; }
 
-			$pdf->Cell(100,7,iconv("UTF-8", "ISO-8859-1//TRANSLIT",$ins_venta->limitarCadena($descripcion,80,"...")),'L B',0,'C');
-			$pdf->Cell(15,7,iconv("UTF-8", "ISO-8859-1//TRANSLIT",$detalle['venta_detalle_cantidad']),'L B',0,'C');
-			$pdf->Cell(32,7,iconv("UTF-8", "ISO-8859-1//TRANSLIT","$ ".number_format($detalle['venta_detalle_precio_venta'],2,'.',',')),'L B',0,'C');
-			$pdf->Cell(34,7,iconv("UTF-8", "ISO-8859-1//TRANSLIT","$ ".number_format($detalle['venta_detalle_total'],2,'.',',')),'L R B',0,'C');
-			$pdf->Ln(7);
+            $x_pos = $pdf->GetX();
+            $y_pos = $pdf->GetY();
+            $pdf->MultiCell(100,7,iconv("UTF-8", "ISO-8859-1//TRANSLIT",$descripcion),'L B','L');
+            $new_y = $pdf->GetY();
+            $h_row = $new_y - $y_pos;
+            $pdf->SetXY($x_pos + 100, $y_pos);
+
+			$pdf->Cell(15,$h_row,iconv("UTF-8", "ISO-8859-1//TRANSLIT",$detalle['venta_detalle_cantidad']),'L B',0,'C');
+			$pdf->Cell(32,$h_row,iconv("UTF-8", "ISO-8859-1//TRANSLIT","$ ".number_format($detalle['venta_detalle_precio_venta'],2,'.',',')),'L B',0,'C');
+			$pdf->Cell(34,$h_row,iconv("UTF-8", "ISO-8859-1//TRANSLIT","$ ".number_format($detalle['venta_detalle_total'],2,'.',',')),'L R B',0,'C');
+			$pdf->Ln($h_row);
 		}
 
         if($pdf->GetY() > 220){ $pdf->AddPage(); }
