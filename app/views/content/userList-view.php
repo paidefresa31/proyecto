@@ -1,27 +1,27 @@
 <div class="container is-fluid mb-6">
-	<h1 class="title">Usuarios</h1>
-	<h2 class="subtitle"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; Lista y Búsqueda de usuarios</h2>
+    <h1 class="title">Usuarios</h1>
+    <h2 class="subtitle"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; Lista y Búsqueda de usuarios</h2>
 </div>
 
 <div class="container pb-6 pt-6">
 
     <?php
-        // SEGURIDAD: Solo el Administrador ve esto
+        /*---------- Bloque de seguridad: Solo Administrador (1) ----------*/
         if($_SESSION['rol'] != 1){
-    ?>
-        <div class="notification is-danger is-light has-text-centered">
-            <h4 class="title is-4">¡Acceso Denegado!</h4>
-            <p>No tienes los permisos necesarios para acceder a este módulo.</p>
-            <br>
-            <a href="<?php echo APP_URL; ?>dashboard/" class="button is-danger is-outlined is-rounded">
-                <i class="fas fa-arrow-left"></i> &nbsp; Regresar al Inicio
-            </a>
-        </div>
-    <?php 
-        } else { 
-            // CORRECCIÓN: Llamamos al controlador con su ruta completa directamente
-		    $insUsuario = new app\controllers\userController();
-            $busqueda = isset($_SESSION[$url[0]]) ? $_SESSION[$url[0]] : "";
+            echo '
+            <div class="notification is-danger is-light has-text-centered">
+                <i class="fas fa-ban fa-3x"></i><br>
+                <h1 class="title">¡Acceso Denegado!</h1>
+                <p>No tienes los permisos necesarios para acceder a este módulo de administración.</p>
+                <br>
+                <a href="'.APP_URL.'dashboard/" class="button is-danger is-rounded">Regresar al Inicio</a>
+            </div>';
+            exit(); // Detiene la carga de la lista y el buscador para no autorizados
+        }
+
+        // Si es Admin, el código continúa aquí abajo
+        $insUsuario = new app\controllers\userController();
+        $busqueda = isset($_SESSION[$url[0]]) ? $_SESSION[$url[0]] : "";
     ?>
 
     <?php if(empty($busqueda)){ ?>
@@ -55,15 +55,11 @@
     </div>
     <?php } ?>
 
-	<div class="form-rest mb-6 mt-6"></div>
+    <div class="form-rest mb-6 mt-6"></div>
 
-	<?php
+    <?php
             // Generamos la tabla
             $pagina_actual = (isset($url[1]) && $url[1] != "") ? $url[1] : 1;
-		    echo $insUsuario->listarUsuarioControlador($pagina_actual, 15, $url[0], $busqueda);
-	?>
-
-    <?php 
-        } // Fin del if de seguridad
+            echo $insUsuario->listarUsuarioControlador($pagina_actual, 15, $url[0], $busqueda);
     ?>
 </div>

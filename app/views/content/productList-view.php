@@ -9,11 +9,22 @@
 
 <div class="container is-fluid pb-6">
     <?php
-        // Guardar el filtro de orden en la memoria si se seleccionó uno
+        /*---------- Bloque de seguridad: Solo Admin (1) y Supervisor (3) ----------*/
+        if($_SESSION['rol'] != 1 && $_SESSION['rol'] != 3){
+            echo '
+            <div class="notification is-danger is-light has-text-centered">
+                <i class="fas fa-ban fa-3x"></i><br>
+                <h1 class="title">¡Acceso Denegado!</h1>
+                <p>No tienes los permisos necesarios para acceder a este módulo.</p>
+                <br>
+                <a href="'.APP_URL.'dashboard/" class="button is-danger is-rounded">Regresar al Inicio</a>
+            </div>';
+            exit(); 
+        }
+
         if(isset($_POST['orden_producto'])){
             $_SESSION['orden_producto'] = $_POST['orden_producto'];
         }
-        // Determinar qué filtro mostrar seleccionado (por defecto A-Z)
         $orden_actual = isset($_SESSION['orden_producto']) ? $_SESSION['orden_producto'] : "nombre_asc";
 
         $insProducto = new app\controllers\productController();
@@ -68,13 +79,13 @@
     </div>
 
     <div class="columns mt-4">
-		<div class="column">
+        <div class="column">
             <?php
                 $pagina_actual = (isset($url[1]) && $url[1] != "") ? $url[1] : 1;
                 echo $insProducto->listarProductoControlador($pagina_actual, 15, $url[0], $categoria, $busqueda);
             ?>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -88,7 +99,7 @@
                 let total_bs = precio_usd * tasa_bcv;
                 let formato_bs = new Intl.NumberFormat('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(total_bs);
                 el.innerHTML = `Bs. ${formato_bs}`;
-                el.classList.add('calculado'); // Marcar para no recalcularlo
+                el.classList.add('calculado'); 
             } else {
                 el.innerHTML = `<span class="has-text-danger">Sin BCV</span>`;
                 el.classList.add('calculado');
@@ -96,10 +107,7 @@
         });
     }
 
-    // Se ejecuta apenas carga la página
     document.addEventListener('DOMContentLoaded', calcularPreciosBs);
-
-    // Se mantiene vigilando por si buscas o cambias de página
     const observer = new MutationObserver(calcularPreciosBs);
     observer.observe(document.body, { childList: true, subtree: true });
 </script>
